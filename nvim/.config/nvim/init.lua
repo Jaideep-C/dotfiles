@@ -179,6 +179,24 @@ vim.o.foldenable = true
 --  See `:help hlsearch`
 vim.keymap.set('n', '<Esc>', '<cmd>nohlsearch<CR>')
 
+-- run.sh in terminal
+vim.keymap.set('n', '<leader>rc', function()
+  -- local file = vim.fn.expand '%:t'
+  -- local class = vim.fn.expand '%:t:r'
+  vim.cmd 'write'
+
+  local cmd = 'bash ./run.sh'
+  local Terminal = require('toggleterm.terminal').Terminal
+  local java_runner = Terminal:new {
+    cmd = cmd,
+    direction = 'horizontal',
+    close_on_exit = false,
+    hidden = true,
+  }
+
+  java_runner:toggle()
+end, { desc = 'Compile & run Java (toggleterm)' })
+
 -- Diagnostic keymaps
 vim.keymap.set('n', '<leader>q', vim.diagnostic.setloclist, { desc = 'Open diagnostic [Q]uickfix list' })
 
@@ -981,14 +999,16 @@ require('lazy').setup({
   --  Here are some example plugins that I've included in the Kickstart repository.
   --  Uncomment any of the lines below to enable them (you will need to restart nvim).
   --
-  -- require 'kickstart.plugins.debug',
-  -- require 'kickstart.plugins.indent_line',
-  -- require 'kickstart.plugins.lint',
-  -- require 'kickstart.plugins.autopairs',
-  -- require 'kickstart.plugins.neo-tree',
-  -- require 'kickstart.plugins.gitsigns', -- adds gitsigns recommend keymaps
+  require 'kickstart.plugins.debug',
+  require 'kickstart.plugins.indent_line',
+  require 'kickstart.plugins.lint',
+  require 'kickstart.plugins.autopairs',
+  require 'kickstart.plugins.neo-tree',
+  require 'kickstart.plugins.gitsigns', -- adds gitsigns recommend keymaps
+  -- my-plugins
   require 'kickstart.plugins.ufo',
   require 'kickstart.plugins.oil',
+  require 'kickstart.plugins.toggleterm',
   -- NOTE: The import below can automatically add your own plugins, configuration, etc from `lua/custom/plugins/*.lua`
   --    This is the easiest way to modularize your config.
   --
