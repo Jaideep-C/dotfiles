@@ -258,6 +258,7 @@ end
 local rtp = vim.opt.rtp
 rtp:prepend(lazypath)
 
+-- require 'custom.snippets'
 -- [[ Configure and install plugins ]]
 --
 --  To check the current status of your plugins, run
@@ -833,6 +834,10 @@ require('lazy').setup({
           -- },
         },
         opts = {},
+        config = function()
+          -- importing custom snippets from which we are loading all the lang snippets
+          require 'custom.snippets'
+        end,
       },
       'folke/lazydev.nvim',
     },
