@@ -197,6 +197,27 @@ vim.keymap.set('n', '<leader>rc', function()
   java_runner:toggle()
 end, { desc = 'Compile & run Java (toggleterm)' })
 
+-- Open Oil at current file's directory, or direct Oil.open with --
+vim.keymap.set('n', '-', function()
+  -- Check if the next character is also '-'
+  local next_char = vim.fn.getcharstr()
+  if next_char == '-' then
+    -- Double dash: open Oil directly
+    require('oil').open()
+  else
+    -- Single dash: open Oil at current file's directory
+    local current_file = vim.fn.expand('%:p')
+    if current_file == '' then
+      -- If no file is open, do nothing (Oil would go to old directory)
+      return
+    else
+      -- Get the directory of the current file
+      local file_dir = vim.fn.fnamemodify(current_file, ':h')
+      require('oil').open(file_dir)
+    end
+  end
+end, { desc = 'Open Oil at current file directory (-) or direct Oil.open (--)' })
+
 -- Diagnostic keymaps
 vim.keymap.set('n', '<leader>q', vim.diagnostic.setloclist, { desc = 'Open diagnostic [Q]uickfix list' })
 
@@ -795,7 +816,9 @@ require('lazy').setup({
               autoSearchPaths = true,
               useLibraryCodeForTypes = true,
               diagnosticMode = 'workspace',
-              extraPaths = { './app', './src', '.' },
+              extraPaths = { '.' }, -- Look in current directory and all subdirectories
+              include = { '**/*.py' }, -- Include all Python files recursively
+              exclude = { '**/node_modules', '**/__pycache__', '**/.git' }, -- Exclude common non-Python directories
             },
           },
         },
