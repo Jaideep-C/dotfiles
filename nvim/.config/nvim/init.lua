@@ -91,7 +91,7 @@ vim.g.mapleader = ' '
 vim.g.maplocalleader = ' '
 
 -- Set to true if you have a Nerd Font installed and selected in the terminal
-vim.g.have_nerd_font = false
+vim.g.have_nerd_font = true
 
 -- [[ Setting options ]]
 -- See `:help vim.o`
@@ -196,6 +196,27 @@ vim.keymap.set('n', '<leader>rc', function()
 
   java_runner:toggle()
 end, { desc = 'Compile & run Java (toggleterm)' })
+
+-- Open Oil at current file's directory, or direct Oil.open with --
+vim.keymap.set('n', '-', function()
+  -- Check if the next character is also '-'
+  local next_char = vim.fn.getcharstr()
+  if next_char == '-' then
+    -- Double dash: open Oil directly
+    require('oil').open()
+  else
+    -- Single dash: open Oil at current file's directory
+    local current_file = vim.fn.expand('%:p')
+    if current_file == '' then
+      -- If no file is open, do nothing (Oil would go to old directory)
+      return
+    else
+      -- Get the directory of the current file
+      local file_dir = vim.fn.fnamemodify(current_file, ':h')
+      require('oil').open(file_dir)
+    end
+  end
+end, { desc = 'Open Oil at current file directory (-) or direct Oil.open (--)' })
 
 -- Diagnostic keymaps
 vim.keymap.set('n', '<leader>q', vim.diagnostic.setloclist, { desc = 'Open diagnostic [Q]uickfix list' })
@@ -723,7 +744,34 @@ require('lazy').setup({
             },
           },
         },
-        basedpyright = {},
+        -- basedpyright = {
+        --   on_new_config = function(new_config, dir)
+        --     local f = io.open('/tmp/bpy-on_new_config.log', 'a')
+        --     f:write('dir=' .. tostring(dir) .. ' cmd=' .. vim.inspect(new_config.cmd) .. '\n')
+        --     f:close()
+        --     local uv = vim.uv or vim.loop
+        --     local function dir_has_file(path, file)
+        --       local stat = uv.fs_stat(path .. '/' .. file)
+        --       return stat and stat.type == 'file'
+        --     end
+        --
+        --     if dir_has_file(dir, 'poetry.lock') then
+        --       vim.notify_once('Running basedpyright with Poetry environment', vim.log.levels.INFO)
+        --       new_config.cmd = { 'poetry', 'run', 'basedpyright-langserver', '--stdio' }
+        --     else
+        --       vim.notify_once('Running basedpyright without virtualenv', vim.log.levels.WARN)
+        --     end
+        --   end,
+        --   settings = {
+        --     basedpyright = {
+        --       analysis = {
+        --         -- autoSearchPaths = true,
+        --         diagnosticMode = 'workspace',
+        --         -- useLibraryCodeForTypes = true,
+        --       },
+        --     },
+        --   },
+        -- },
       }
 
       -- Ensure the servers and tools above are installed
@@ -746,6 +794,36 @@ require('lazy').setup({
       })
       require('mason-tool-installer').setup { ensure_installed = ensure_installed }
 
+      local uv = vim.uv or vim.loop
+      local function dir_has_file(path, file)
+        local stat = uv.fs_stat(path .. '/' .. file)
+        return stat and stat.type == 'file'
+      end
+
+      -- FIXME: use consistent way to setup lsp
+      require('lspconfig').basedpyright.setup {
+        on_new_config = function(new_config, dir)
+          if dir_has_file(dir, 'poetry.lock') then
+            vim.notify_once('Running basedpyright with Poetry environment', vim.log.levels.INFO)
+            new_config.cmd = { 'poetry', 'run', 'basedpyright-langserver', '--stdio' }
+          else
+            vim.notify_once('Running basedpyright without virtualenv', vim.log.levels.WARN)
+          end
+        end,
+        settings = {
+          basedpyright = {
+            analysis = {
+              autoSearchPaths = true,
+              useLibraryCodeForTypes = true,
+              diagnosticMode = 'workspace',
+              extraPaths = { '.' }, -- Look in current directory and all subdirectories
+              include = { '**/*.py' }, -- Include all Python files recursively
+              exclude = { '**/node_modules', '**/__pycache__', '**/.git' }, -- Exclude common non-Python directories
+            },
+          },
+        },
+        capabilities = capabilities,
+      }
       require('mason-lspconfig').setup {
         ensure_installed = {}, -- explicitly set to an empty table (Kickstart populates installs via mason-tool-installer)
         automatic_installation = false,
@@ -1008,7 +1086,7 @@ require('lazy').setup({
   require 'kickstart.plugins.indent_line',
   require 'kickstart.plugins.lint',
   require 'kickstart.plugins.autopairs',
-  require 'kickstart.plugins.neo-tree',
+  -- require 'kickstart.plugins.neo-tree',
   require 'kickstart.plugins.gitsigns', -- adds gitsigns recommend keymaps
   -- my-plugins
   require 'kickstart.plugins.ufo',
