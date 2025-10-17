@@ -22,10 +22,33 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.util.*;
 
+public class Main {{
+
+	public static void main(String[] args)
+			throws FileNotFoundException {{
+		FastScanner fs = new FastScanner(args);
+		PrintWriter out = new PrintWriter(System.out);
+		Solution.setIO(fs, out);
+
+		if (Solution.IS_MULTI_TESTCASE) {{
+			int t = fs.nextInt();
+			for (int tt = 0; tt < t; tt++) {{
+				Solution.solve();
+			}}
+			out.close();
+			return;
+		}}
+		Solution.solve();
+		out.close();
+	}}
+}}
+
 class Solution {{
 	public static boolean IS_MULTI_TESTCASE = true;
+	private static FastScanner inp;
+	private static PrintWriter out;
 
-	public static void solve(FastScanner scanner, PrintWriter out) {{
+	public static void solve() {{
 		{}
 	}}
 	
@@ -40,25 +63,10 @@ class Solution {{
 	private static <T extends Comparable<T>> T max(T... values) {{
 		return Arrays.stream(values).max(Comparator.naturalOrder()).orElse(null);
 	}}
-}}
-
-public class Main {{
-
-	public static void main(String[] args)
-			throws FileNotFoundException {{
-		FastScanner fs = new FastScanner(args);
-		PrintWriter out = new PrintWriter(System.out);
-
-		if (Solution.IS_MULTI_TESTCASE) {{
-			int t = fs.nextInt();
-			for (int tt = 0; tt < t; tt++) {{
-				Solution.solve(fs, out);
-			}}
-			out.close();
-			return;
-		}}
-		Solution.solve(fs,out);
-		out.close();
+	
+	public static void setIO(FastScanner input, PrintWriter output) {{
+		inp = input;
+		out = output;
 	}}
 }}
 
@@ -92,7 +100,7 @@ class FastScanner {{
 		return Integer.parseInt(next());
 	}}
 
-	int[] readArray(int n) {{
+	int[] nextIntArray(int n) {{
 		int[] a = new int[n];
 		for (int i = 0; i < n; i++) {{
 			a[i] = nextInt();
@@ -100,7 +108,7 @@ class FastScanner {{
 		return a;
 	}}
 
-	long[] readLongArray(int n) {{
+	long[] nextLongArray(int n) {{
 		long[] a = new long[n];
 		for (int i = 0; i < n; i++) {{
 			a[i] = nextLong();
