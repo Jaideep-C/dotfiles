@@ -206,7 +206,7 @@ vim.keymap.set('n', '-', function()
     require('oil').open()
   else
     -- Single dash: open Oil at current file's directory
-    local current_file = vim.fn.expand('%:p')
+    local current_file = vim.fn.expand '%:p'
     if current_file == '' then
       -- If no file is open, do nothing (Oil would go to old directory)
       return
@@ -772,6 +772,7 @@ require('lazy').setup({
         --     },
         --   },
         -- },
+        jdtls = {},
       }
 
       -- Ensure the servers and tools above are installed
@@ -791,6 +792,8 @@ require('lazy').setup({
       vim.list_extend(ensure_installed, {
         'stylua', -- Used to format Lua code
         'ruff', -- Python Linter & formatter
+        'google-java-format',
+        'checkstyle',
       })
       require('mason-tool-installer').setup { ensure_installed = ensure_installed }
 
