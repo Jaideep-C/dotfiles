@@ -63,6 +63,44 @@ class Solution {{
 	private static <T extends Comparable<T>> T max(T... values) {{
 		return Arrays.stream(values).max(Comparator.naturalOrder()).orElse(null);
 	}}
+
+	@SuppressWarnings("unused")
+	private static Integer pow(Integer a, int n) {{
+		Integer ans = 1;
+		while (n > 0) {{
+			if ((n & 1) == 1)
+				ans *= a;
+			a *= a;
+			n >>= 1;
+		}}
+		return ans;
+	}}
+
+	@SuppressWarnings("unused")
+	private static Long pow(Long a, int n) {{
+		Long ans = 1L;
+		while (n > 0) {{
+			if ((n & 1) == 1)
+				ans *= a;
+			a *= a;
+			n >>= 1;
+		}}
+		return ans;
+	}}
+
+	private static Integer gcd(Integer a, Integer b) {{
+		while (b != 0) {{
+			int t = a % b;
+			a = b;
+			b = t;
+		}}
+		return a;
+	}}
+
+	@SuppressWarnings("unused")
+	private static Integer lcm(Integer a, Integer b) {{
+		return (a / gcd(a, b)) * b;
+	}}
 	
 	public static void setIO(FastScanner input, PrintWriter output) {{
 		inp = input;
@@ -96,27 +134,27 @@ class FastScanner {{
 		return st.nextToken();
 	}}
 
-	int nextInt() {{
+	Integer nextInt() {{
 		return Integer.parseInt(next());
 	}}
 
-	int[] nextIntArray(int n) {{
-		int[] a = new int[n];
+	Integer[] nextIntArray(int n) {{
+		Integer[] a = new Integer[n];
 		for (int i = 0; i < n; i++) {{
 			a[i] = nextInt();
 		}}
 		return a;
 	}}
 
-	long[] nextLongArray(int n) {{
-		long[] a = new long[n];
+	Long[] nextLongArray(int n) {{
+		Long[] a = new Long[n];
 		for (int i = 0; i < n; i++) {{
 			a[i] = nextLong();
 		}}
 		return a;
 	}}
 
-	long nextLong() {{
+	Long nextLong() {{
 		return Long.parseLong(next());
 	}}
 }}
