@@ -743,36 +743,36 @@ require('lazy').setup({
               -- diagnostics = { disable = { 'missing-fields' } },
             },
           },
+          capabilities = capabilities,
         },
-        -- basedpyright = {
-        --   on_new_config = function(new_config, dir)
-        --     local f = io.open('/tmp/bpy-on_new_config.log', 'a')
-        --     f:write('dir=' .. tostring(dir) .. ' cmd=' .. vim.inspect(new_config.cmd) .. '\n')
-        --     f:close()
-        --     local uv = vim.uv or vim.loop
-        --     local function dir_has_file(path, file)
-        --       local stat = uv.fs_stat(path .. '/' .. file)
-        --       return stat and stat.type == 'file'
-        --     end
-        --
-        --     if dir_has_file(dir, 'poetry.lock') then
-        --       vim.notify_once('Running basedpyright with Poetry environment', vim.log.levels.INFO)
-        --       new_config.cmd = { 'poetry', 'run', 'basedpyright-langserver', '--stdio' }
-        --     else
-        --       vim.notify_once('Running basedpyright without virtualenv', vim.log.levels.WARN)
-        --     end
-        --   end,
-        --   settings = {
-        --     basedpyright = {
-        --       analysis = {
-        --         -- autoSearchPaths = true,
-        --         diagnosticMode = 'workspace',
-        --         -- useLibraryCodeForTypes = true,
-        --       },
-        --     },
-        --   },
-        -- },
-        jdtls = {},
+        basedpyright = {
+          on_new_config = function(new_config, dir)
+            local uv = vim.uv or vim.loop
+            local function dir_has_file(path, file)
+              local stat = uv.fs_stat(path .. '/' .. file)
+              return stat and stat.type == 'file'
+            end
+            if dir_has_file(dir, 'poetry.lock') then
+              vim.notify_once('Running basedpyright with Poetry environment', vim.log.levels.INFO)
+              new_config.cmd = { 'poetry', 'run', 'basedpyright-langserver', '--stdio' }
+            else
+              vim.notify_once('Running basedpyright without virtualenv', vim.log.levels.WARN)
+            end
+          end,
+          settings = {
+            basedpyright = {
+              analysis = {
+                autoSearchPaths = true,
+                useLibraryCodeForTypes = true,
+                diagnosticMode = 'workspace',
+                extraPaths = { '.' }, -- Look in current directory and all subdirectories
+                include = { '**/*.py' }, -- Include all Python files recursively
+                exclude = { '**/node_modules', '**/__pycache__', '**/.git' }, -- Exclude common non-Python directories
+              },
+            },
+          },
+          capabilities = capabilities,
+        },
       }
 
       -- Ensure the servers and tools above are installed
@@ -790,6 +790,7 @@ require('lazy').setup({
       -- for you, so that they are available from within Neovim.
       local ensure_installed = vim.tbl_keys(servers or {})
       vim.list_extend(ensure_installed, {
+        'jdtls', -- java lsp used in nvim-jdtls
         'stylua', -- Used to format Lua code
         'ruff', -- Python Linter & formatter
         'google-java-format',
@@ -797,48 +798,19 @@ require('lazy').setup({
       })
       require('mason-tool-installer').setup { ensure_installed = ensure_installed }
 
-      local uv = vim.uv or vim.loop
-      local function dir_has_file(path, file)
-        local stat = uv.fs_stat(path .. '/' .. file)
-        return stat and stat.type == 'file'
+      -- create server with the given config above
+      for server, config in pairs(servers) do
+        if not vim.tbl_isempty(config) then
+          vim.lsp.config(server, config)
+        end
       end
-
-      -- FIXME: use consistent way to setup lsp
-      require('lspconfig').basedpyright.setup {
-        on_new_config = function(new_config, dir)
-          if dir_has_file(dir, 'poetry.lock') then
-            vim.notify_once('Running basedpyright with Poetry environment', vim.log.levels.INFO)
-            new_config.cmd = { 'poetry', 'run', 'basedpyright-langserver', '--stdio' }
-          else
-            vim.notify_once('Running basedpyright without virtualenv', vim.log.levels.WARN)
-          end
-        end,
-        settings = {
-          basedpyright = {
-            analysis = {
-              autoSearchPaths = true,
-              useLibraryCodeForTypes = true,
-              diagnosticMode = 'workspace',
-              extraPaths = { '.' }, -- Look in current directory and all subdirectories
-              include = { '**/*.py' }, -- Include all Python files recursively
-              exclude = { '**/node_modules', '**/__pycache__', '**/.git' }, -- Exclude common non-Python directories
-            },
-          },
-        },
-        capabilities = capabilities,
-      }
       require('mason-lspconfig').setup {
         ensure_installed = {}, -- explicitly set to an empty table (Kickstart populates installs via mason-tool-installer)
         automatic_installation = false,
-        handlers = {
-          function(server_name)
-            local server = servers[server_name] or {}
-            -- This handles overriding only values explicitly passed
-            -- by the server configuration above. Useful when disabling
-            -- certain features of an LSP (for example, turning off formatting for ts_ls)
-            server.capabilities = vim.tbl_deep_extend('force', {}, capabilities, server.capabilities or {})
-            require('lspconfig')[server_name].setup(server)
-          end,
+        automatic_enable = {
+          exclude = {
+            'jdtls',
+          },
         },
       }
     end,
@@ -1095,6 +1067,7 @@ require('lazy').setup({
   require 'kickstart.plugins.ufo',
   require 'kickstart.plugins.oil',
   require 'kickstart.plugins.toggleterm',
+  require 'kickstart.plugins.nvim-jdtls',
   -- NOTE: The import below can automatically add your own plugins, configuration, etc from `lua/custom/plugins/*.lua`
   --    This is the easiest way to modularize your config.
   --
