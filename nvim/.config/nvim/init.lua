@@ -791,6 +791,7 @@ require('lazy').setup({
       local ensure_installed = vim.tbl_keys(servers or {})
       vim.list_extend(ensure_installed, {
         'jdtls', -- java lsp used in nvim-jdtls
+        'java-debug-adapter',
         'stylua', -- Used to format Lua code
         'ruff', -- Python Linter & formatter
         'google-java-format',
