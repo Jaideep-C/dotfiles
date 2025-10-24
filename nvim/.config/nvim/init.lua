@@ -746,15 +746,15 @@ require('lazy').setup({
           capabilities = capabilities,
         },
         basedpyright = {
-          on_new_config = function(new_config, dir)
+          before_init = function(initialization_params, client)
             local uv = vim.uv or vim.loop
             local function dir_has_file(path, file)
               local stat = uv.fs_stat(path .. '/' .. file)
               return stat and stat.type == 'file'
             end
-            if dir_has_file(dir, 'poetry.lock') then
+            if dir_has_file(client.root_dir, 'poetry.lock') then
               vim.notify_once('Running basedpyright with Poetry environment', vim.log.levels.INFO)
-              new_config.cmd = { 'poetry', 'run', 'basedpyright-langserver', '--stdio' }
+              client.cmd = { 'poetry', 'run', 'basedpyright-langserver', '--stdio' }
             else
               vim.notify_once('Running basedpyright without virtualenv', vim.log.levels.WARN)
             end
