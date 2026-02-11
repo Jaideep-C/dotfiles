@@ -70,10 +70,23 @@ ZSH_THEME="robbyrussell"
 # Custom plugins may be added to $ZSH_CUSTOM/plugins/
 # Example format: plugins=(rails git textmate ruby lighthouse)
 # Add wisely, as too many plugins slow down shell startup.
-plugins=(git)
+plugins=(git kubectl)
 plugins+=(zsh-vi-mode)
 
 source $ZSH/oh-my-zsh.sh
+
+# Show current directory on the right (helpful for git submodules / multiple projects)
+RPROMPT='%F{240}%~%f'
+
+# One history across all shells, drop duplicates, ignore lines starting with space
+setopt SHARE_HISTORY
+setopt HIST_IGNORE_ALL_DUPS
+setopt HIST_IGNORE_SPACE
+
+# Directory stack: every cd pushes, pop back with pd or popd (last 10 dirs)
+setopt AUTO_PUSHD
+setopt PUSHD_IGNORE_DUPS
+DIRSTACKSIZE=10
 
 # User configuration
 
@@ -106,6 +119,17 @@ alias ohmyzsh="nvim ~/.oh-my-zsh"
 HISTFILESIZE=10000000 
 alias clear='printf "\033]1337;ClearScrollback\a" && clear'
 alias k='kubectl'
+alias pd='popd'
+alias redeploy='make undeploy deploy'
 
 export PATH="$HOME/.local/bin:$PATH"
 export PATH="$HOME/bin:$PATH"
+# The following lines have been added by Docker Desktop to enable Docker CLI completions.
+fpath=(/Users/jaideep/.docker/completions $fpath)
+autoload -Uz compinit
+compinit
+# End of Docker CLI completions
+eval "$(pyenv init -)"
+
+# Fuzzy history (Ctrl+R), file find (Ctrl+T), cd (Alt+C). Requires: brew install fzf && $(brew --prefix)/opt/fzf/install
+[[ -f ~/.fzf.zsh ]] && source ~/.fzf.zsh
