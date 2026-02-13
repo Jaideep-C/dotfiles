@@ -73,6 +73,11 @@ ZSH_THEME="robbyrussell"
 plugins=(git kubectl)
 plugins+=(zsh-vi-mode)
 
+# Ensure fzf keybindings load after zsh-vi-mode (zvm overrides Ctrl+R otherwise)
+function zvm_after_init() {
+  [[ -f ~/.fzf.zsh ]] && source ~/.fzf.zsh
+}
+
 source $ZSH/oh-my-zsh.sh
 
 # Show current directory on the right (helpful for git submodules / multiple projects)
@@ -131,5 +136,4 @@ compinit
 # End of Docker CLI completions
 eval "$(pyenv init -)"
 
-# Fuzzy history (Ctrl+R), file find (Ctrl+T), cd (Alt+C). Requires: brew install fzf && $(brew --prefix)/opt/fzf/install
-[[ -f ~/.fzf.zsh ]] && source ~/.fzf.zsh
+# fzf is sourced via zvm_after_init hook above (to avoid zsh-vi-mode overriding Ctrl+R)
