@@ -135,5 +135,16 @@ autoload -Uz compinit
 compinit
 # End of Docker CLI completions
 eval "$(pyenv init -)"
-
 # fzf is sourced via zvm_after_init hook above (to avoid zsh-vi-mode overriding Ctrl+R)
+
+# jenv settings
+export PATH="$HOME/.jenv/bin:$PATH"
+eval "$(jenv init -)"
+jenv enable-plugin maven
+
+# kubebuilder autocompletion for zsh
+. <(kubebuilder completion zsh)
+
+# Added by LM Studio CLI (lms)
+export PATH="$PATH:/Users/loganwick/.lmstudio/bin"
+# End of LM Studio CLI section
