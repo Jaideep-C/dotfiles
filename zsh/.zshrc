@@ -73,9 +73,17 @@ ZSH_THEME="robbyrussell"
 plugins=(git kubectl)
 plugins+=(zsh-vi-mode)
 
+if [[ ! -d /opt/homebrew/opt/fzf ]]; then
+    echo "%F{yellow}Warning: fzf not found. Fuzzy search (Ctrl+R) will not work.%f"
+    echo "%F{yellow}Install with: brew install fzf%f"
+fi
+
 # Ensure fzf keybindings load after zsh-vi-mode (zvm overrides Ctrl+R otherwise)
 function zvm_after_init() {
-  [[ -f ~/.fzf.zsh ]] && source ~/.fzf.zsh
+  if [[ -d /opt/homebrew/opt/fzf ]]; then
+    source /opt/homebrew/opt/fzf/shell/completion.zsh
+    source /opt/homebrew/opt/fzf/shell/key-bindings.zsh
+  fi
 }
 
 source $ZSH/oh-my-zsh.sh
@@ -121,7 +129,7 @@ DIRSTACKSIZE=10
 # Example aliases
 alias zshconfig="nvim ~/.zshrc"
 alias ohmyzsh="nvim ~/.oh-my-zsh"
-HISTFILESIZE=10000000 
+HISTFILESIZE=10000000
 alias clear='printf "\033]1337;ClearScrollback\a" && clear'
 alias k='kubectl'
 alias pd='popd'
@@ -136,6 +144,7 @@ compinit
 # End of Docker CLI completions
 eval "$(pyenv init -)"
 # fzf is sourced via zvm_after_init hook above (to avoid zsh-vi-mode overriding Ctrl+R)
+# Using Homebrew's fzf installation at /opt/homebrew/opt/fzf
 
 # jenv settings
 export PATH="$HOME/.jenv/bin:$PATH"
