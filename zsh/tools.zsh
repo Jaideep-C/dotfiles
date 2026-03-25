@@ -14,7 +14,13 @@ fi
 # =============================================================================
 # Python version manager
 if command -v pyenv &> /dev/null; then
-  eval "$(pyenv init -)"
+  export PYENV_ROOT="$HOME/.pyenv"
+  export PATH="$PYENV_ROOT/bin:$PATH"
+  pyenv() {
+    unfunction pyenv
+    eval "$(command pyenv init -)"
+    pyenv "$@"
+  }
 fi
 
 # =============================================================================
@@ -23,7 +29,7 @@ fi
 # Java version manager
 if command -v jenv &> /dev/null; then
   eval "$(jenv init -)"
-  jenv enable-plugin maven
+  [[ ! -e "$HOME/.jenv/plugins/maven" ]] && jenv enable-plugin maven
 fi
 
 # =============================================================================
