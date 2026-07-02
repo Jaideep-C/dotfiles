@@ -5,7 +5,7 @@ description: Call the Asato local-AiB REST APIs (auth/user-management service an
 
 # Asato API
 
-Generic authenticated HTTP client for the two Asato local-AiB services. Login, token caching/refresh, and reachability checks are handled by `scripts/asato-api.sh`. Endpoint discovery is done live against each service's OpenAPI spec — do not assume a path, look it up.
+Generic authenticated HTTP client for the two Asato local-AiB services. Login, token caching/refresh, and reachability checks are handled by `~/skills/work/asato/asato-api/scripts/asato-api.sh`. Endpoint discovery is done live against each service's OpenAPI spec — do not assume a path, look it up.
 
 ## Services
 
@@ -27,10 +27,11 @@ If a call 500s/403s under one identity, retry under the other before concluding 
 
 ## Step 0: reachability check
 
-Before doing any real work, run:
+Before doing any real work, set the script path and run a reachability check:
 
 ```bash
-skills/work/asato/asato-api/scripts/asato-api.sh check
+asato_api=~/skills/work/asato/asato-api/scripts/asato-api.sh
+$asato_api check
 ```
 
 If either service is unreachable (non-200/timeout), **do not** debug this yourself — read and follow the `aib-debug` skill (`~/.claude/skills/aib-debug/SKILL.md` or wherever it's installed) to get local AiB healthy, then re-run `check`.
@@ -40,8 +41,8 @@ If either service is unreachable (non-200/timeout), **do not** debug this yourse
 Fetch (and cache to `/tmp/asato-api/openapi-{auth,api}.json`) the spec you need, then grep/jq it — never try to inline these into context, `openapi-api.json` is ~900KB / 260 endpoints.
 
 ```bash
-skills/work/asato/asato-api/scripts/asato-api.sh spec api    # -> /tmp/asato-api/openapi-api.json
-skills/work/asato/asato-api/scripts/asato-api.sh spec auth   # -> /tmp/asato-api/openapi-auth.json
+$asato_api spec api    # -> /tmp/asato-api/openapi-api.json
+$asato_api spec auth   # -> /tmp/asato-api/openapi-auth.json
 ```
 
 Useful jq/python queries against the cached file:
@@ -71,14 +72,14 @@ Known top-level tags on `api`: `siteadmin/admin`, `siteadmin/tenant`, `siteadmin
 
 ```bash
 # GET/DELETE (no body)
-skills/work/asato/asato-api/scripts/asato-api.sh call <sa|user> GET /users/?limit=5
-skills/work/asato/asato-api/scripts/asato-api.sh call <sa|user> GET /dashboards/
+$asato_api call <sa|user> GET /users/?limit=5
+$asato_api call <sa|user> GET /dashboards/
 
 # POST/PUT/PATCH with a JSON body
-skills/work/asato/asato-api/scripts/asato-api.sh call <sa|user> POST /notifications/ '{"title": "hi"}'
+$asato_api call <sa|user> POST /notifications/ '{"title": "hi"}'
 
 # management endpoints live on the auth service, not api
-skills/work/asato/asato-api/scripts/asato-api.sh call-auth sa GET /tenant/
+$asato_api call-auth sa GET /tenant/
 ```
 
 `call` / `call-auth` transparently log in (and re-login when the cached token is within 60s of expiry — tokens last ~1h) and print the raw response body. A non-2xx status is echoed to stderr as `HTTP <code>` and the command exits non-zero — treat that as a real error, not something to silently retry with a modified request unless the body/params were actually wrong.
@@ -86,12 +87,12 @@ skills/work/asato/asato-api/scripts/asato-api.sh call-auth sa GET /tenant/
 ## Script reference
 
 ```
-scripts/asato-api.sh check                                    # verify both services are reachable
-scripts/asato-api.sh login <sa|user>                           # force a fresh login
-scripts/asato-api.sh token <sa|user>                           # print a valid jwtToken (rarely needed directly)
-scripts/asato-api.sh call <sa|user> <METHOD> <path> [json]     # authenticated call to api.local.asato.ai
-scripts/asato-api.sh call-auth <sa|user> <METHOD> <path> [json]# authenticated call to user.local.asato.ai
-scripts/asato-api.sh spec <auth|api>                           # fetch+cache openapi.json, print its path
+$asato_api check                                    # verify both services are reachable
+$asato_api login <sa|user>                          # force a fresh login
+$asato_api token <sa|user>                          # print a valid jwtToken (rarely needed directly)
+$asato_api call <sa|user> <METHOD> <path> [json]    # authenticated call to api.local.asato.ai
+$asato_api call-auth <sa|user> <METHOD> <path> [json] # authenticated call to user.local.asato.ai
+$asato_api spec <auth|api>                          # fetch+cache openapi.json, print its path
 ```
 
 Token cache lives at `/tmp/asato-api/token-{sa,user}.json`; spec cache at `/tmp/asato-api/openapi-{auth,api}.json`. Both are safe to delete to force a refresh.
