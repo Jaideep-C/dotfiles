@@ -14,6 +14,12 @@ function M.apply(config)
   config.harfbuzz_features = { 'calt=1', 'clig=1', 'liga=1' } -- default: kern, liga, clig
 
   config.color_scheme = 'Dracula' -- default: unset (built-in colors)
+  config.colors = {
+    -- Dracula background is #282a36; this is a ~10% lighter tint so the
+    -- visual bell flash (see behavior.lua) is barely noticeable instead of
+    -- flashing the default bright foreground color.
+    visual_bell = '#34364a',
+  }
 
   config.macos_window_background_blur = 20 -- default: 0
   config.native_macos_fullscreen_mode = true -- default: false
