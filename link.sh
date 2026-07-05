@@ -25,6 +25,9 @@ stow tmux || log_error "failed to stow tmux"
 log "stowing aerospace"
 stow aerospace || log_error "failed to stow aerospace"
 
+log "stowing wezterm"
+stow wezterm || log_error "failed to stow wezterm"
+
 log "stowing zsh"
 stow zsh || log_error "failed to stow zsh"
 
