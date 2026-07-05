@@ -25,6 +25,9 @@ stow -D tmux || log_error "failed to unstow tmux"
 log "unstowing aerospace"
 stow -D aerospace || log_error "failed to unstow aerospace"
 
+log "unstowing wezterm"
+stow -D wezterm || log_error "failed to unstow wezterm"
+
 log "unstowing zsh"
 stow -D zsh || log_error "failed to unstow zsh"
 

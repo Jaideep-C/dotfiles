@@ -2,7 +2,8 @@
 # Zsh Configuration - Modular Setup
 # ============================================================================
 # Configuration is split into multiple files for better organization:
-#   - path.zsh       : PATH and environment variables
+#   - path.zsh       : PATH configuration
+#   - agent-env.zsh  : MCP / Cursor harness / skill credentials (local secrets)
 #   - oh-my-zsh.zsh  : Oh My Zsh framework and plugins
 #   - plugins.zsh    : Post-load plugin configuration (fzf, etc.)
 #   - options.zsh    : Shell options, history, and prompt
@@ -24,6 +25,7 @@ fi
 
 # Source configuration files in order
 source "${ZCONFIG_DIR}/path.zsh"
+source "${ZCONFIG_DIR}/agent-env.zsh"
 source "${ZCONFIG_DIR}/oh-my-zsh.zsh"
 source "${ZCONFIG_DIR}/plugins.zsh"
 source "${ZCONFIG_DIR}/options.zsh"
