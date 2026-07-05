@@ -9,7 +9,8 @@ The configuration is split into multiple files for better organization and maint
 ```
 zsh/
 ├── .zshrc           # Main entry point - sources all other files
-├── path.zsh         # PATH configuration and environment variables
+├── path.zsh         # PATH configuration
+├── agent-env.zsh    # MCP / Cursor harness / skill credentials (loads local secrets)
 ├── oh-my-zsh.zsh    # Oh My Zsh framework and plugin definitions
 ├── plugins.zsh      # Post-load plugin configuration (fzf, etc.)
 ├── options.zsh      # Shell options, history, and prompt settings
@@ -30,6 +31,15 @@ Configures the `PATH` environment variable. Order matters here - earlier entries
 - User binaries (`~/.local/bin`, `~/bin`)
 - Development tool paths (jenv, LM Studio, etc.)
 
+### `agent-env.zsh`
+Credentials for AI agent tooling — not general shell config.
+
+**Used by:** MCP servers (MongoDB, etc.), Cursor agent harness, dotfiles skills.
+
+**Secrets live in:** `agent-env.local.zsh` (gitignored). Copy from `agent-env.local.zsh.example`.
+
+**Contains:** nothing by itself; sources the local file if present. Falls back to legacy `~/.mcp-env` during migration.
+
 ### `oh-my-zsh.zsh`
 Configures and loads the Oh My Zsh framework.
 
@@ -46,7 +56,7 @@ Post-load configuration for plugins that need to be loaded after Oh My Zsh.
 - fzf (fuzzy finder) integration
 - Other plugin-specific configurations that need special handling
 
-**Note:** fzf is loaded here (after oh-my-zsh) to prevent zsh-vi-mode from overriding the Ctrl+R keybinding.
+**Note:** fzf hooks into `zvm_after_init` here so it loads after zsh-vi-mode's lazy init on the first prompt (which would otherwise override Ctrl+R).
 
 ### `options.zsh`
 Shell behavior and appearance settings.
@@ -81,11 +91,12 @@ Initialization and configuration for external development tools.
 The files are sourced in this specific order:
 
 1. **path.zsh** - Set up PATH first so tools can be found
-2. **oh-my-zsh.zsh** - Load the framework and plugins
-3. **plugins.zsh** - Configure plugins that need post-load setup
-4. **options.zsh** - Set shell options and behavior
-5. **aliases.zsh** - Define command aliases
-6. **tools.zsh** - Initialize external tools (after completions are set up)
+2. **agent-env.zsh** - Load MCP / skill credentials (before tools that may need them)
+3. **oh-my-zsh.zsh** - Load the framework and plugins
+4. **plugins.zsh** - Configure plugins that need post-load setup
+5. **options.zsh** - Set shell options and behavior
+6. **aliases.zsh** - Define command aliases
+7. **tools.zsh** - Initialize external tools (after completions are set up)
 
 This order ensures that dependencies are loaded before they're needed.
 

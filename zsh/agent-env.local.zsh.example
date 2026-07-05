@@ -1,0 +1,6 @@
+# Agent environment — local secrets (copy to agent-env.local.zsh)
+#
+# Used by: MCP servers (MongoDB, etc.), Cursor agent harness, dotfiles skills.
+
+# MongoDB MCP
+export MDB_MCP_CONNECTION_STRING='mongodb://user:pass@localhost:27017/admin?directConnection=true'
