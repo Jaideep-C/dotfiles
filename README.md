@@ -38,7 +38,7 @@ To remove symlinks:
 | `tmux` | `~/.config/tmux` | stow, tmux, git, JetBrains Mono Nerd Font | TPM + plugins (Dracula) |
 | `wezterm` | `~/.config/wezterm` | stow, wezterm, JetBrains Mono Nerd Font | — |
 | `zsh` | `~/.zshrc`, `~/*.zsh` | stow, git, fzf | oh-my-zsh, zsh-vi-mode |
-| `aerospace` | `~/.config/aerospace` | stow, aerospace (cask) | taps `nikitabobko/aerospace` |
+| `aerospace` | `~/.config/aerospace` | stow, `nikitabobko/tap/aerospace` (cask) | — |
 | `skills` | agent skill dirs (see below) | stow | stows into multiple targets |
 
 See per-package READMEs where they exist (e.g. `zsh/README.md`).
