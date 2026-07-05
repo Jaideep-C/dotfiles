@@ -1,0 +1,13 @@
+# Agent environment — local secrets (copy to agent-env.local.zsh)
+#
+# Used by: MCP servers (MongoDB, etc.), Cursor agent harness, dotfiles skills
+# (e.g. skills/work/asato/asato-api/scripts/asato-api.sh)
+
+# MongoDB MCP
+export MDB_MCP_CONNECTION_STRING='mongodb://user:pass@localhost:27017/admin?directConnection=true'
+
+# Asato API — site admin (sa) and tenant user credentials
+export ASATO_API_SA_USERNAME='admin@site-admin.com'
+export ASATO_API_SA_PASSWORD='your-password'
+export ASATO_API_USERNAME='admin@tenant.example.com'
+export ASATO_API_PASSWORD='your-password'
