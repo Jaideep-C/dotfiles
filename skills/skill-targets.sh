@@ -1,5 +1,5 @@
 # shellcheck shell=bash
-# Shared skill stow targets for link.sh and unlink.sh.
+# Agent skill stow targets for skills/link.sh and skills/unlink.sh.
 skill_targets=(
   "$HOME/.cursor/skills"
   "$HOME/.claude/skills"
