@@ -46,7 +46,7 @@ Post-load configuration for plugins that need to be loaded after Oh My Zsh.
 - fzf (fuzzy finder) integration
 - Other plugin-specific configurations that need special handling
 
-**Note:** fzf is loaded here (after oh-my-zsh) to prevent zsh-vi-mode from overriding the Ctrl+R keybinding.
+**Note:** fzf hooks into `zvm_after_init` here so it loads after zsh-vi-mode's lazy init on the first prompt (which would otherwise override Ctrl+R).
 
 ### `options.zsh`
 Shell behavior and appearance settings.
