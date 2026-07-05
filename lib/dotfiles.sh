@@ -3,11 +3,16 @@
 
 DOTFILES_DIR="${DOTFILES_DIR:-$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)}"
 
-# Single logging seam. Defines log()/log_error() prefixed with [<prefix>].
+# Single logging seam. log()/log_error() are prefixed with [_LOG_PREFIX].
+_LOG_PREFIX="dotfiles"
 init_log() {
-  local prefix="$1"
-  log() { echo "[$prefix] $*"; }
-  log_error() { echo "[$prefix] ERROR: $*" >&2; }
+  _LOG_PREFIX="$1"
+}
+log() {
+  echo "[${_LOG_PREFIX}] $*"
+}
+log_error() {
+  echo "[${_LOG_PREFIX}] ERROR: $*" >&2
 }
 
 # Package management / config files — never stowed into targets.
