@@ -4,4 +4,5 @@ skill_targets=(
   "$HOME/.cursor/skills"
   "$HOME/.claude/skills"
   "$HOME/skills"
+  "$HOME/.agents/skills/"
 )
