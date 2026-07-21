@@ -4,8 +4,8 @@ brew=(tmux git)
 casks=(font-jetbrains-mono-nerd-font)
 
 post_link() {
+  # TPM installs into ~/.tmux/plugins (not the stowed ~/.config/tmux/plugins).
   local TPM_DIR="$HOME/.tmux/plugins/tpm"
-  local TMUX_PLUGINS_DIR="${XDG_CONFIG_HOME:-$HOME/.config}/tmux/plugins"
 
   if [ ! -d "$TPM_DIR" ]; then
     log "installing tpm"
@@ -18,13 +18,12 @@ post_link() {
     log "tpm already installed, skipping"
   fi
 
-  if [ ! -d "$TMUX_PLUGINS_DIR/tmux" ] && [ -x "$TPM_DIR/bin/install_plugins" ]; then
-    log "installing tmux plugins"
+  # Idempotent: only clones plugins listed in tmux.conf that are missing.
+  if [ -x "$TPM_DIR/bin/install_plugins" ]; then
+    log "installing missing tmux plugins"
     "$TPM_DIR/bin/install_plugins" || {
       log_error "failed to install tmux plugins"
       return 1
     }
-  else
-    log "tmux plugins already present, skipping"
   fi
 }
