@@ -41,7 +41,7 @@ To remove symlinks:
 | `aerospace` | `~/.config/aerospace` | stow, `nikitabobko/tap/aerospace` (cask) | — |
 | `skills` | agent skill dirs (see below) | stow | stows into multiple targets |
 
-See per-package READMEs where they exist (e.g. `zsh/README.md`).
+See per-package READMEs (`aerospace/`, `nvim/`, `tmux/`, `wezterm/`, `zsh/`, `skills/`, `lib/`).
 
 ## Layout
 
